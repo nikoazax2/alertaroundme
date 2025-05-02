@@ -17,6 +17,11 @@
                     <li>☢️ Radon (Géorisques) : Vérifié, aucun risque radon détecté près de vous.</li>
                 </ul>
             </div>
+
+            <!-- Affichage de l'adresse vérifiée -->
+            <div v-if="verifiedAddress" class="text-gray-700 mt-4">
+                <p>📍 Adresse vérifiée : {{ verifiedAddress }}</p>
+            </div>
         </div>
         <button @click="reload" class="mt-4 bg-blue-500 text-white py-2 px-4 rounded">
             🔄 Rechercher à nouveau
@@ -31,6 +36,7 @@ const loading = ref(true);
 const error = ref(null);
 const alertQuake = ref(null);
 const alertRadon = ref(null);
+const verifiedAddress = ref(null); // Nouvelle variable pour l'adresse vérifiée
 
 async function getUserLocation() {
     return new Promise((resolve, reject) => {
@@ -45,7 +51,10 @@ async function getCodeInsee(lat, lon) {
     const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=10&addressdetails=1`;
     const response = await fetch(url);
     const data = await response.json();
-    return data.address ? data.address.postcode || data.address.city || data.address.village : null;
+    return {
+        codeInsee: data.address.postcode,
+        address: data.display_name
+    };
 }
 
 async function fetchAlerts() {
@@ -66,7 +75,10 @@ async function fetchAlerts() {
             }
 
             // Radon - API Géorisques
-            const codeInsee = await getCodeInsee(lat.latitude, lat.longitude);
+            const {
+                codeInsee,
+                address
+            } = await getCodeInsee(lat.latitude, lat.longitude);
             if (codeInsee) {
                 const radonRes = await fetch(`https://georisques.gouv.fr/api/v1/radon?code_insee=${codeInsee}`);
                 const radonData = await radonRes.json();
@@ -75,6 +87,7 @@ async function fetchAlerts() {
                     const category = radon.properties.categorie;
                     alertRadon.value = `Potentiel radon de catégorie ${category} détecté à proximité`;
                 }
+                verifiedAddress.value = address
             } else {
                 alertRadon.value = "Aucune donnée radon disponible pour votre localisation.";
             }
@@ -90,6 +103,7 @@ function reload() {
     alertQuake.value = null;
     alertRadon.value = null;
     error.value = null;
+    verifiedAddress.value = null; // Réinitialisation de l'adresse
     fetchAlerts();
 }
 
@@ -97,3 +111,9 @@ onMounted(() => {
     fetchAlerts();
 });
 </script>
+
+<style>
+ul {
+    list-style-type: none;
+}
+</style>
