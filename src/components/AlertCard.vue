@@ -55,12 +55,26 @@
         <span v-if="source.data.details.station">{{ source.data.details.station }}</span>
       </div>
 
-      <!-- ReliefWeb crises details -->
+      <!-- GDELT crises details -->
       <ul v-if="source.id === 'reliefweb' && source.data.details" class="mt-2 space-y-1 text-xs">
         <li v-for="(c, i) in source.data.details" :key="i">
-          {{ c.types.join(', ') }} — {{ c.name }}
+          {{ c.title }} <span class="text-gray-400">({{ c.source }})</span>
         </li>
       </ul>
+
+      <!-- Flood forecast -->
+      <div v-if="source.id === 'flood' && source.data.details?.forecast" class="mt-2 text-xs">
+        <div class="flex gap-1 items-end h-8">
+          <div
+            v-for="(d, i) in source.data.details.forecast"
+            :key="i"
+            class="flex-1 bg-blue-400 dark:bg-blue-600 rounded-t"
+            :style="{ height: barHeight(d.discharge) }"
+            :title="`${d.date}: ${d.discharge.toFixed(0)} m³/s`"
+          ></div>
+        </div>
+        <div class="text-gray-400 mt-1">Prévision 7 jours (débit m³/s)</div>
+      </div>
 
       <!-- UV color indicator -->
       <div
@@ -87,6 +101,13 @@ const props = defineProps({
 });
 
 defineEmits(['retry']);
+
+function barHeight(val) {
+  const details = props.source.data?.details;
+  if (!details?.forecast) return '0%';
+  const max = Math.max(...details.forecast.map((d) => d.discharge), 1);
+  return `${Math.max((val / max) * 100, 5)}%`;
+}
 
 const borderClass = computed(() => {
   if (props.source.status === 'loading') return 'border-gray-300';

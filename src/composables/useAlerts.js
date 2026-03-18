@@ -6,6 +6,7 @@ import { fetchEonet } from '../api/eonet.js';
 import { fetchWaqi } from '../api/waqi.js';
 import { fetchReliefWeb } from '../api/reliefweb.js';
 import { fetchUv } from '../api/uv.js';
+import { fetchFlood } from '../api/flood.js';
 
 const SOURCE_DEFS = [
   { id: 'usgs', label: 'Séismes (USGS)', icon: '🌍', fetcher: fetchUsgs },
@@ -13,8 +14,9 @@ const SOURCE_DEFS = [
   { id: 'openmeteo', label: 'Météo extrême', icon: '🌡️', fetcher: fetchOpenMeteo },
   { id: 'eonet', label: 'Événements NASA', icon: '🛰️', fetcher: fetchEonet },
   { id: 'waqi', label: 'Qualité de l\'air', icon: '💨', fetcher: fetchWaqi },
-  { id: 'reliefweb', label: 'Crises (ONU)', icon: '🚨', fetcher: fetchReliefWeb },
+  { id: 'reliefweb', label: 'Veille crises (GDELT)', icon: '🚨', fetcher: fetchReliefWeb },
   { id: 'uv', label: 'Index UV', icon: '☀️', fetcher: fetchUv },
+  { id: 'flood', label: 'Risque inondation', icon: '🌊', fetcher: fetchFlood },
 ];
 
 export function useAlerts() {
