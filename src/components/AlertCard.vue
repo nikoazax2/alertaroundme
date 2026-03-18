@@ -54,6 +54,24 @@
         ></span>
         <span v-if="source.data.details.station">{{ source.data.details.station }}</span>
       </div>
+
+      <!-- ReliefWeb crises details -->
+      <ul v-if="source.id === 'reliefweb' && source.data.details" class="mt-2 space-y-1 text-xs">
+        <li v-for="(c, i) in source.data.details" :key="i">
+          {{ c.types.join(', ') }} — {{ c.name }}
+        </li>
+      </ul>
+
+      <!-- UV color indicator -->
+      <div
+        v-if="source.id === 'uv' && source.data.details"
+        class="mt-2 flex items-center gap-2 text-xs"
+      >
+        <span
+          class="inline-block w-3 h-3 rounded-full"
+          :style="{ backgroundColor: source.data.details.color }"
+        ></span>
+      </div>
     </div>
 
     <!-- Idle -->
