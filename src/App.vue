@@ -32,6 +32,12 @@
           @retry="onRetry"
         />
       </div>
+
+      <NotifyForm
+        :latitude="geo.latitude.value"
+        :longitude="geo.longitude.value"
+        :communeName="geo.communeName.value"
+      />
     </main>
   </div>
 </template>
@@ -40,6 +46,7 @@
 import { watch } from 'vue';
 import LocationBar from './components/LocationBar.vue';
 import AlertCard from './components/AlertCard.vue';
+import NotifyForm from './components/NotifyForm.vue';
 import { useGeolocation } from './composables/useGeolocation.js';
 import { useAlerts } from './composables/useAlerts.js';
 
